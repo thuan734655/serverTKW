@@ -4,9 +4,14 @@ const cors = require('cors');
 const mysql = require('mysql2/promise');
 
 const app = express();
-const port = process.env.PORT || 3000; // Sử dụng biến môi trường PORT nếu có
+const port = process.env.PORT || 3000;
 
-app.use(cors()); // Cho phép CORS cho tất cả các route
+// Cấu hình CORS
+app.use(cors({
+  origin: 'http://localhost:1234', // Cho phép yêu cầu từ origin này
+  methods: ['GET', 'POST'], // Các phương thức HTTP được phép
+  allowedHeaders: ['Content-Type'], // Các tiêu đề cho phép
+}));
 
 app.use(bodyParser.json());
 
@@ -22,9 +27,9 @@ let connection;
 async function connectDB() {
   try {
     connection = await mysql.createConnection(dbConfig);
-    console.log('Đã kết nối vào cơ sở dữ liệu MySQL.');
+    console.log('Connected to the MySQL database.');
   } catch (err) {
-    console.error('Lỗi khi kết nối đến cơ sở dữ liệu:', err);
+    console.error('Error connecting to the database:', err);
   }
 }
 
@@ -37,13 +42,13 @@ app.post('/login', async (req, res) => {
     const [rows] = await connection.execute('SELECT `username`, `password`, `email`, `fullName`, `idUser` FROM `account` WHERE account.username = ? and account.password= ?', [username, password]);
 
     if (rows.length > 0) {
-      res.status(200).json({ message: 'Đăng nhập thành công', user: rows[0], statusCode: 200 });
+      res.status(200).json({ message: 'Login successful', user: rows[0], statusCode: 200 });
     } else {
-      res.status(401).json({ message: 'Thông tin đăng nhập không hợp lệ', statusCode: 401 });
+      res.status(401).json({ message: 'Invalid credentials', statusCode: 401 });
     }
   } catch (error) {
-    console.error('Lỗi truy vấn cơ sở dữ liệu:', error);
-    res.status(500).json({ message: 'Lỗi máy chủ nội bộ' });
+    console.error('Error querying database:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
@@ -54,16 +59,16 @@ app.post('/register', async (req, res) => {
     const [rows] = await connection.execute('INSERT INTO `account`(`username`, `password`, `email`) VALUES (?,?,?)', [username, password, email]);
 
     if (rows.affectedRows > 0) {
-      res.status(200).json({ message: 'Đăng ký thành công', statusCode: 200 });
+      res.status(200).json({ message: 'Registration successful', statusCode: 200 });
     } else {
-      res.status(500).json({ message: 'Đăng ký thất bại', statusCode: 500 });
+      res.status(500).json({ message: 'Registration failed', statusCode: 500 });
     }
   } catch (error) {
-    console.error('Lỗi truy vấn cơ sở dữ liệu:', error);
-    res.status(500).json({ message: 'Lỗi máy chủ nội bộ' });
+    console.error('Error querying database:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
 app.listen(port, () => {
-  console.log(`Máy chủ đang chạy tại http://localhost:${port}`);
+  console.log(`Server is running on http://localhost:${port}`);
 });
