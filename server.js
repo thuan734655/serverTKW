@@ -6,13 +6,9 @@ const mysql = require('mysql2/promise');
 const app = express();
 const port = process.env.PORT || 3000;
 
-const corsOptions = {
-  origin: 'http://localhost:1234',
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type'],
-};
+// Cấu hình CORS cho phép tất cả các nguồn gốc
+app.use(cors());
 
-app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 // Cấu hình kết nối tới MySQL
