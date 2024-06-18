@@ -6,12 +6,13 @@ const mysql = require('mysql2/promise');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Cấu hình CORS
-app.use(cors({
-  origin: 'http://localhost:1234', // Cho phép yêu cầu từ origin này
-  methods: ['GET', 'POST'], // Các phương thức HTTP được phép
-  allowedHeaders: ['Content-Type'], // Các tiêu đề cho phép
-}));
+const corsOptions = {
+    origin: 'http://localhost:1234', // Cho phép yêu cầu từ origin này
+    methods: ['GET', 'POST'], // Các phương thức HTTP được phép
+    allowedHeaders: ['Content-Type'], // Các tiêu đề cho phép
+  };
+  
+  app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
 
@@ -35,11 +36,12 @@ async function connectDB() {
 
 connectDB();
 
+// Endpoint xử lý đăng nhập
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    const [rows] = await connection.execute('SELECT `username`, `password`, `email`, `fullName`, `idUser` FROM `account` WHERE account.username = ? and account.password= ?', [username, password]);
+    const [rows] = await connection.execute('SELECT `username`, `password`, `email`, `fullName`, `idUser` FROM `account` WHERE account.username = ? AND account.password = ?', [username, password]);
 
     if (rows.length > 0) {
       res.status(200).json({ message: 'Login successful', user: rows[0], statusCode: 200 });
@@ -52,11 +54,12 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// Endpoint xử lý đăng ký
 app.post('/register', async (req, res) => {
   const { username, password, email } = req.body;
 
   try {
-    const [rows] = await connection.execute('INSERT INTO `account`(`username`, `password`, `email`) VALUES (?,?,?)', [username, password, email]);
+    const [rows] = await connection.execute('INSERT INTO `account`(`username`, `password`, `email`) VALUES (?, ?, ?)', [username, password, email]);
 
     if (rows.affectedRows > 0) {
       res.status(200).json({ message: 'Registration successful', statusCode: 200 });
@@ -69,6 +72,7 @@ app.post('/register', async (req, res) => {
   }
 });
 
+// Khởi động server và lắng nghe trên cổng được cấu hình
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
