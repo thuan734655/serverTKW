@@ -1,14 +1,18 @@
 {
+    "version": 2,
     "builds": [
-      {
-        "src": "server.js",
-        "use": "@vercel/node"
-      }
+      { "src": "api/login.js", "use": "@vercel/node" },
+      { "src": "api/register.js", "use": "@vercel/node" }
+    ],
+    "routes": [
+      { "src": "/login", "dest": "api/login.js" },
+      { "src": "/register", "dest": "api/register.js" }
     ],
     "env": {
-      "DB_HOST": "byu0q98odkr959kiebb7-mysql.services.clever-cloud.com",
-      "DB_USER": "usymr3cribbuebyu",
-      "DB_PASSWORD": "ngBDpu0WyDZLCJDeBNAw",
-      "DB_DATABASE": "byu0q98odkr959kiebb7"
+      "MYSQL_HOST": "your_mysql_host",
+      "MYSQL_USER": "your_mysql_user",
+      "MYSQL_PASSWORD": "your_mysql_password",
+      "MYSQL_DATABASE": "your_mysql_database"
     }
   }
+  
