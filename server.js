@@ -1,21 +1,21 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 const mysql = require('mysql2/promise');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 const corsOptions = {
-    origin: 'http://localhost:1234', // Cho phép yêu cầu từ origin này
-    methods: ['GET', 'POST'], // Các phương thức HTTP được phép
-    allowedHeaders: ['Content-Type'], // Các tiêu đề cho phép
-  };
-  
-  app.use(cors(corsOptions));
+  origin: 'http://localhost:1234',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type'],
+};
 
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
+// Cấu hình kết nối tới MySQL
 const dbConfig = {
   host: 'byu0q98odkr959kiebb7-mysql.services.clever-cloud.com',
   user: 'usymr3cribbuebyu',
