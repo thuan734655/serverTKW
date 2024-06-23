@@ -59,8 +59,8 @@ app.post("/register", async (req, res) => {
     await connection.beginTransaction();
 
     const [accountResult] = await connection.execute(
-      "INSERT INTO `account`(`username`, `password`, `email`) VALUES (?, ?, ?)",
-      [username, password, email]
+      "INSERT INTO `account`(`username`, `password`, `email`, `fullName`) VALUES (?,?,?,?)",
+      [username, password, email,username]
     );
 
     if (accountResult.affectedRows === 0) {
